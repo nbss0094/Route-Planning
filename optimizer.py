@@ -7,11 +7,9 @@ Original file is located at
     https://colab.research.google.com/drive/1Zqbxwo__6-Y003dmQo5SMskdRL1t3E5A
 
 LIBRARY
-"""
-
 pip install mip
-
 pip install streamlit
+"""
 
 # optimizer.py
 import random
