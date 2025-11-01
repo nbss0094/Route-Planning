@@ -1,8 +1,9 @@
-mip==1.14.2
+mip>=1.14.2
 streamlit==1.38.0
 googlemaps==4.10.0
 requests==2.32.3
 cffi==1.16.0
+
 
 
 
