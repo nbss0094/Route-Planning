@@ -17,6 +17,43 @@ import streamlit as st
 import requests
 from mip import Model, xsum, OptimizationStatus, minimize, INTEGER, BINARY, CONTINUOUS
 
+import googlemaps
+import math
+
+api_key = 'AIzaSyDwiFBM7wMB0zYo5WvwYqSaKE892kEPRvg' # ใส่ API Key ของคุณ
+gmaps = googlemaps.Client(key=api_key)
+
+# ฟังก์ชันหาพิกัดจากชื่อสถานที่
+def geocode_address(address):
+
+    try:
+        geocode_result = gmaps.geocode(address)
+        if geocode_result:
+            location = geocode_result[0]['geometry']['location']
+            return location
+        else:
+            return None
+    except Exception as e:
+        print(f"เกิดข้อผิดพลาด: {e}")
+        return None
+
+# ฟังก์ชันคำนวณระยะทางตามถนน (Google Maps API)
+def road_distance(origin, destination):
+    try:
+        result = gmaps.distance_matrix(origin, destination, mode="driving")
+        element = result["rows"][0]["elements"][0]
+        if element["status"] == "OK":
+            distance_km = element["distance"]["value"] / 1000
+            duration_hr = element["duration"]["value"] / 3600
+            return distance_km, duration_hr
+        else:
+            print(f"ไม่สามารถคำนวณระยะทางระหว่าง {origin} และ {destination} ได้ (status={element['status']})")
+            return None, None
+
+    except Exception as e:
+        print(f"เกิดข้อผิดพลาดในการคำนวณระยะทางถนนระหว่าง {origin} กับ {destination}: {e}")
+        return None, None
+
 def solve_itinerary(
     potential_hotels: list[dict],
     potential_attractions: list[dict],
