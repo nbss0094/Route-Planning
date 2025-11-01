@@ -1,4 +1,5 @@
-mip==1.15.0
+mip>=1.6.0
 streamlit==1.38.0
 googlemaps==4.10.0
 requests==2.32.3
+
