@@ -23,6 +23,7 @@ import math
 api_key = 'AIzaSyDwiFBM7wMB0zYo5WvwYqSaKE892kEPRvg' # ใส่ API Key ของคุณ
 gmaps = googlemaps.Client(key=api_key)
 
+
 # ฟังก์ชันหาพิกัดจากชื่อสถานที่
 def geocode_address(address):
 
@@ -36,6 +37,7 @@ def geocode_address(address):
     except Exception as e:
         print(f"เกิดข้อผิดพลาด: {e}")
         return None
+
 
 # ฟังก์ชันคำนวณระยะทางตามถนน (Google Maps API)
 def road_distance(origin, destination):
@@ -53,6 +55,26 @@ def road_distance(origin, destination):
     except Exception as e:
         print(f"เกิดข้อผิดพลาดในการคำนวณระยะทางถนนระหว่าง {origin} กับ {destination}: {e}")
         return None, None
+
+
+# ฟังก์ชันสร้าง Distance/Time Matrix จาก Google Maps
+def get_travel_matrices(places):
+    n = len(places)
+    distance_matrix = [[0.0 for _ in range(n)] for _ in range(n)]
+    time_matrix = [[0.0 for _ in range(n)] for _ in range(n)]
+
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                continue
+            origin = (places[i]['lat'], places[i]['lon'])
+            destination = (places[j]['lat'], places[j]['lon'])
+            distance_km, duration_hr = road_distance(origin, destination)
+            distance_matrix[i][j] = distance_km if distance_km else 0
+            time_matrix[i][j] = duration_hr if duration_hr else 0
+
+    return distance_matrix, time_matrix
+
 
 def solve_itinerary(
     potential_hotels: list[dict],
