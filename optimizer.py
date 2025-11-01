@@ -181,42 +181,6 @@ def solve_itinerary(
     return itineraries
 
 
-# get distance and time travel matrices from Geoapify Route Matrix API
-def get_travel_matrices(places: list[dict]) -> tuple[list[list[float]], list[list[float]]]:
-    api_key = st.secrets["GEOAPIFY_API_KEY"]
-    # Prepare the list of coordinates
-    coords = [{"location": [place['lon'], place['lat']]} for place in places]
-
-    # Call the Geoapify Route Matrix API
-    api_url = f"https://api.geoapify.com/v1/routematrix?apiKey={api_key}"
-    request_body = {
-        "mode": "drive",
-        "sources": coords,
-        "targets": coords
-    }
-
-    try:
-        response = requests.post(api_url, json=request_body)
-        response.raise_for_status()  # Raise an exception for bad status codes
-        resp_json = response.json()
-
-        # read distance and time matrix from response json
-        distance_matrix = []
-        time_matrix = []
-        for row in resp_json.get('sources_to_targets', []):
-            distance_row = []
-            time_row = []
-            for cell in row:
-                distance_row.append(cell.get('distance', float('inf')) / 1000)  # convert to km
-                time_row.append(cell.get('time', float('inf')) / 3600)  ## แก้เป็น hour
-            distance_matrix.append(distance_row)
-            time_matrix.append(time_row)
-        return distance_matrix, time_matrix
-    except requests.exceptions.RequestException as e:
-        st.error(f"Failed to get distance matrix: {e}")
-        return [], []
-
-
 def run_optimize(data):
     all_locations = data['all_locations']
     hotel = data['hotel']
